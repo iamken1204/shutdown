@@ -2,6 +2,7 @@ package shutdown
 
 // Hook handles cleanup function within.
 type Hook interface {
+	// Cleanup executes pre-actions before the program shuts down.
 	Cleanup() error
 }
 
