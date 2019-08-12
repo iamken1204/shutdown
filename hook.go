@@ -5,9 +5,6 @@ type Hook interface {
 	Cleanup() error
 }
 
-// Cleanup represents the pre-action before the program shuts down.
-type Cleanup func() error
-
 // hook is a pure function that implements Hook.
 type hook func() error
 
