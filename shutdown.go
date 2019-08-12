@@ -11,14 +11,19 @@ import (
 // Shutdown contains cleanup hooks.
 type Shutdown struct {
 	Timeout time.Duration
+	ctx     context.Context
+	cancel  context.CancelFunc
 	signals []os.Signal
 	hooks   []Hook
 }
 
 // New initializes a Shutdown instance.
 func New() *Shutdown {
+	ctx, cancel := context.WithCancel(context.Background())
 	return &Shutdown{
 		Timeout: defaultTimeout,
+		ctx:     ctx,
+		cancel:  cancel,
 		signals: defaultSignals(),
 	}
 }
@@ -39,14 +44,6 @@ func (s *Shutdown) Listen() {
 	count := 0
 	total := len(s.hooks)
 
-	var ctx context.Context
-	var cancel context.CancelFunc
-	if s.Timeout > 0 {
-		ctx, cancel = context.WithTimeout(context.Background(), s.Timeout)
-	} else {
-		ctx, cancel = context.WithCancel(context.Background())
-	}
-
 	go func() {
 		if total == 0 {
 			done <- struct{}{}
@@ -60,14 +57,19 @@ func (s *Shutdown) Listen() {
 		}
 	}()
 
+	go func() {
+		time.Sleep(s.Timeout)
+		s.cancel()
+	}()
+
 	for {
 		select {
-		case <-ctx.Done():
+		case <-s.ctx.Done():
 			return
 		case <-done:
 			count++
 			if count >= total {
-				cancel()
+				s.cancel()
 			}
 		}
 	}
