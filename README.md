@@ -1,6 +1,7 @@
 # shutdown
 
-package `github.com/iamken1204/shutdown` offers a simple way to watch OS termination signals and execute cleanup function.
+This package offers a simple way to watch OS termination signals and execute cleanup functions.   
+[GoDoc](https://godoc.org/github.com/iamken1204/shutdown)
 
 ## Install
 
