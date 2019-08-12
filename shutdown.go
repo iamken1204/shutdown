@@ -74,3 +74,8 @@ func (s *Shutdown) Listen() {
 		}
 	}
 }
+
+// Context returns Shutdown's underlying Context.
+func (s *Shutdown) Context() context.Context {
+	return s.ctx
+}
