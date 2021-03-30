@@ -36,7 +36,7 @@ func (s *Shutdown) AddHook(hooks ...Hook) {
 // Listen blocks the program until received terminating signals, then trigger
 // all hook functions within.
 func (s *Shutdown) Listen() {
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, s.signals...)
 	<-quit
 
